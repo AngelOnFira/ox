@@ -2,7 +2,9 @@
 use crate::config::{Reader, Status, TokenType};
 use crate::editor::OFFSET;
 use crate::util::{line_offset, spaces_to_tabs, tabs_to_spaces};
-use crate::{log, Editor, Event, EventStack, Position, Row, Size, Variable, COUNTER, VERSION};
+use crate::{
+    log, Editor, Event, EventStack, Position, Row, Size, Variable, CODE_READER, COUNTER, VERSION,
+};
 use crossterm::event::KeyCode as Key;
 use regex::Regex;
 use std::ffi::OsStr;
@@ -442,6 +444,7 @@ impl Document {
         self.dirty = true;
         let ind = line_offset(pos.y, offset, self.rows.len());
         self.rows[ind] = after;
+
         ind
     }
     fn delete_line(&mut self, pos: &Position, offset: i128) {
@@ -533,6 +536,11 @@ impl Document {
                 }
             }
             Event::Insertion(pos, ch) => {
+                // Pass the rendered document to the code reader
+
+                // Update the COUNTER
+                CODE_READER.lock().unwrap().add_string_state_frame(self.render(TabType::Spaces, 4));
+
                 self.dirty = true;
                 self.rows[pos.y].insert(ch, pos.x);
                 self.move_cursor(Key::Right, term, config.general.wrap_cursor);

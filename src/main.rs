@@ -31,6 +31,7 @@ mod undo;
 mod util;
 
 use clap::{App, Arg};
+use code_reader::CodeReader;
 use directories::BaseDirs;
 use document::Document;
 use editor::{Direction, Editor, Position};
@@ -38,6 +39,7 @@ use oxa::Variable;
 use row::Row;
 use std::fs::OpenOptions;
 use std::io::Write;
+use std::sync::Mutex;
 use std::{env, panic};
 use terminal::{Size, Terminal};
 use undo::{Event, EventStack};
@@ -48,6 +50,7 @@ extern crate lazy_static;
 lazy_static! {
     // Create a counter that can be mutated and accessed from anywhere
     pub static ref COUNTER: std::sync::Mutex<u32> = std::sync::Mutex::new(0);
+    pub static ref CODE_READER: Mutex<CodeReader> = Mutex::new(CodeReader::new());
 }
 
 // Create log macro

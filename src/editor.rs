@@ -5,7 +5,7 @@ use crate::highlight::Token;
 use crate::oxa::interpret_line;
 use crate::undo::{reverse, BankType};
 use crate::util::{title, trim_end, Exp};
-use crate::{log, Document, Event, Row, Size, Terminal, VERSION};
+use crate::{log, Document, Event, Row, Size, Terminal, VERSION, COUNTER};
 use clap::App;
 use crossterm::event::{Event as InputEvent, KeyCode, KeyEvent, KeyModifiers};
 use crossterm::style::{Attribute, Color, SetBackgroundColor, SetForegroundColor};
@@ -584,7 +584,7 @@ impl Editor {
             Event::MoveWord(direction) => match direction {
                 Direction::Left => self.doc[self.tab].word_left(&self.term.size),
                 Direction::Right => self.doc[self.tab].word_right(&self.term.size),
-                _ => {},
+                _ => {}
             },
             Event::GotoCursor(pos) => {
                 let rows = &self.doc[self.tab].rows;
@@ -723,19 +723,22 @@ impl Editor {
         }
     }
     pub fn will_edit(event: &Event) -> bool {
-        matches!(event, Event::SpliceUp(_, _)
-            | Event::SplitDown(_, _)
-            | Event::InsertLineAbove(_)
-            | Event::InsertLineBelow(_)
-            | Event::Deletion(_, _)
-            | Event::Insertion(_, _)
-            | Event::InsertTab(_)
-            | Event::DeleteTab(_)
-            | Event::DeleteLine(_, _, _)
-            | Event::UpdateLine(_, _, _, _)
-            | Event::ReplaceAll
-            | Event::Replace
-            | Event::Overwrite(_, _))
+        matches!(
+            event,
+            Event::SpliceUp(_, _)
+                | Event::SplitDown(_, _)
+                | Event::InsertLineAbove(_)
+                | Event::InsertLineBelow(_)
+                | Event::Deletion(_, _)
+                | Event::Insertion(_, _)
+                | Event::InsertTab(_)
+                | Event::DeleteTab(_)
+                | Event::DeleteLine(_, _, _)
+                | Event::UpdateLine(_, _, _, _)
+                | Event::ReplaceAll
+                | Event::Replace
+                | Event::Overwrite(_, _)
+        )
     }
     pub fn undo(&mut self) {
         self.doc[self.tab].undo_stack.commit();
@@ -1155,8 +1158,10 @@ impl Editor {
         }
     }
     fn command_line(&self) -> String {
+        dbg!("rendering");
         // Render the command line
-        let line = &self.doc[self.tab].cmd_line.text;
+        // let line = &self.doc[self.tab].cmd_line.text;
+        let line = COUNTER.lock().unwrap().to_string();
         // Add the correct styling
         match self.doc[self.tab].cmd_line.msg {
             Type::Error => self.add_background(&format!(

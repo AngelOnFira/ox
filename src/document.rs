@@ -2,7 +2,7 @@
 use crate::config::{Reader, Status, TokenType};
 use crate::editor::OFFSET;
 use crate::util::{line_offset, spaces_to_tabs, tabs_to_spaces};
-use crate::{log, Editor, Event, EventStack, Position, Row, Size, Variable, VERSION};
+use crate::{log, Editor, Event, EventStack, Position, Row, Size, Variable, COUNTER, VERSION};
 use crossterm::event::KeyCode as Key;
 use regex::Regex;
 use std::ffi::OsStr;
@@ -207,12 +207,7 @@ impl Document {
     }
     pub fn config_to_commandline(status: &Status) -> CommandLine {
         CommandLine {
-            text: match status {
-                Status::Success => "Welcome to Ox".to_string(),
-                Status::File => "Config file not found, using default values".to_string(),
-                Status::Parse(error) => format!("Failed to parse: {:?}", error),
-                Status::Empty => "Config file is empty, using defaults".to_string(),
-            },
+            text: COUNTER.lock().unwrap().to_string(),
             msg: match status {
                 Status::Success | Status::Empty => Type::Info,
                 Status::File => Type::Warning,

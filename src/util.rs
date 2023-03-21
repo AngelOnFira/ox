@@ -3,6 +3,8 @@ use regex::Regex;
 use unicode_segmentation::UnicodeSegmentation;
 use unicode_width::{UnicodeWidthChar, UnicodeWidthStr};
 
+use crate::COUNTER;
+
 // For holding general purpose regular expressions
 #[derive(Debug, Clone)]
 pub struct Exp {
@@ -128,5 +130,9 @@ pub fn safe_ansi_insert(index: usize, list: &[&str], chk: &Regex) -> Option<usiz
             return Some(ac.saturating_add(1));
         }
     }
+
+    // Update the COUNTER
+    *COUNTER.lock().unwrap() += 1;
+
     None
 }

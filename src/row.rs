@@ -1,3 +1,4 @@
+use crate::COUNTER;
 // Row.rs - Handling the rows of a document and their appearance
 use crate::config::{Reader, TokenType};
 use crate::editor::{RESET_BG, RESET_FG};
@@ -238,6 +239,9 @@ impl Row {
         before.push(ch);
         before.push_str(&after);
         self.string = before;
+
+        // Update the COUNTER
+        *COUNTER.lock().unwrap() += 1;
     }
     pub fn delete(&mut self, pos: usize) -> Option<char> {
         // Remove a character

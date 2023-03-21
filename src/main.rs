@@ -42,6 +42,14 @@ use std::{env, panic};
 use terminal::{Size, Terminal};
 use undo::{Event, EventStack};
 
+#[macro_use]
+extern crate lazy_static;
+
+lazy_static! {
+    // Create a counter that can be mutated and accessed from anywhere
+    pub static ref COUNTER: std::sync::Mutex<u32> = std::sync::Mutex::new(0);
+}
+
 // Create log macro
 #[macro_export]
 macro_rules! log {
